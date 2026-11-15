@@ -1,0 +1,114 @@
+{
+  "name": "evolve-presenter",
+  "productName": "Evolve Presenter",
+  "version": "0.4.0",
+  "description": "Live presentation software for churches: songs, slides, playlists, media, layers and stage display",
+  "author": "Elisha",
+  "license": "MIT",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k -n vite,app \"vite\" \"wait-on tcp:5183 && cross-env VITE_DEV=1 electron .\"",
+    "build": "vite build",
+    "start": "vite build && electron .",
+    "dist": "vite build && electron-builder --win",
+    "dist:linux": "vite build && electron-builder --linux",
+    "test": "node shared/presentation.test.js && node shared/songImport.test.js && node shared/songExport.test.js && node shared/bibleRef.test.js && node shared/bibleImport.test.js",
+    "release": "vite build && electron-builder --win --publish always",
+    "release:linux": "vite build && electron-builder --linux --publish always"
+  },
+  "build": {
+    "appId": "ng.evolve.presenter",
+    "productName": "Evolve Presenter",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "!dist/**/*.yml",
+      "electron/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png",
+      "artifactName": "Evolve-Presenter-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Evolve Presenter"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "AudioVideo",
+      "maintainer": "Elisha",
+      "executableName": "evolve-presenter",
+      "artifactName": "Evolve-Presenter-${version}-${arch}.${ext}",
+      "icon": "build/icon.png",
+      "synopsis": "Live presentation software for churches",
+      "description": "Songs, slides, playlists, media, props, stage display, NDI and a phone remote."
+    },
+    "extraResources": [
+      {
+        "from": "vendor/ndi",
+        "to": "ndi",
+        "filter": [
+          "*.dll",
+          "libndi.so*",
+          "*.txt"
+        ]
+      }
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "elisagerafa900",
+        "repo": "evolve-presenter-releases",
+        "releaseType": "release"
+      }
+    ],
+    "deb": {
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1",
+        "libsecret-1-0"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "33.4.11",
+    "electron-builder": "^25.1.8",
+    "vite": "^5.4.11",
+    "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11",
+    "koffi": "^3.3.8",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elisagerafa900/evolve-presenter.git"
+  }
+}
